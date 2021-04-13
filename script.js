@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import * as dat from 'dat.gui'
-import { Group } from 'three'
+import { Group, Material } from 'three'
 
 /**
  * Debug UI: https://github.com/dataarts/dat.gui
@@ -113,7 +113,34 @@ group.position.set(0,0,0)
 console.log(group)
 
 // Debug properties
-debugUI.add(group.position, 'y', 0, 10, 0.01)
+debugUI
+    .add(group.position, 'x')
+    .min(0)
+    .max(10)
+    .step(0.01)
+    .name('Vortex Position X')
+debugUI
+    .add(group.position, 'y')
+    .min(0)
+    .max(10)
+    .step(0.01)
+    .name('Vortex Position Y')
+debugUI
+    .add(group.position, 'z')
+    .min(0)
+    .max(10)
+    .step(0.01)
+    .name('Vortex Position Z')
+debugUI
+    .add(group, 'visible')
+debugUI
+    .add(meshes[4].material, 'wireframe')
+debugUI
+    .add(meshes[4].material.color, 'r')
+    .min(0)
+    .max(1)
+    .step(0.01)
+    .name('First Cube Red Channel')
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
