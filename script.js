@@ -1,6 +1,14 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import gsap from 'gsap'
+import * as dat from 'dat.gui'
+import { Group } from 'three'
+
+/**
+ * Debug UI: https://github.com/dataarts/dat.gui
+ */
+const debugUI = new dat.GUI()
 
 /**
  * Cursor
@@ -78,6 +86,7 @@ window.addEventListener('dblclick', () =>
 const scene = new THREE.Scene()
 
 // Object
+
 // const mesh = new THREE.Mesh(
 //     new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
 //     new THREE.MeshBasicMaterial({ color: 0xff0000 })
@@ -85,6 +94,8 @@ const scene = new THREE.Scene()
 // scene.add(mesh)
 
 const meshes = []
+const group = new Group()
+
 
 for (let index = 0; index < 20; index++) {
     meshes[index] = new THREE.Mesh(
@@ -92,15 +103,22 @@ for (let index = 0; index < 20; index++) {
         new THREE.MeshBasicMaterial({ wireframe: true, color: `rgb(33,0,${(index * 60) + 0})` })
     )
     scene.add(meshes[index])
+    group.add(meshes[index])
     meshes[index].position.y += index * 2
     meshes[index].rotation.z = index * 10
 }
+
+scene.add(group)
+group.position.set(0,0,0)
+console.log(group)
+
+// Debug properties
+debugUI.add(group.position, 'y', 0, 10, 0.01)
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 
 camera.position.z = 4
-camera.lookAt(meshes[0].position)
 scene.add(camera)
 
 // Controls
