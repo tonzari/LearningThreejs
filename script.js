@@ -8,7 +8,19 @@ import { Group, Material } from 'three'
 /**
  * Debug UI: https://github.com/dataarts/dat.gui
  */
-const debugUI = new dat.GUI()
+const debugUI = new dat.GUI({ closed: true, width: 350 })
+
+// calling a function from debug UI. See "spin"
+
+const debugParams = {
+    color: 0xff0000,
+    spin: () =>
+    {
+        gsap.to(group.rotation, { y: group.rotation.y + 1, duration: 1 })
+
+    },
+    rotationSpeed: .1
+}
 
 /**
  * Cursor
@@ -96,23 +108,23 @@ const scene = new THREE.Scene()
 const meshes = []
 const group = new Group()
 
-
 for (let index = 0; index < 20; index++) {
     meshes[index] = new THREE.Mesh(
-        new THREE.BoxGeometry(index, index, index, 5, 5, 5),
+        new THREE.BoxGeometry(index, index, index, 2, 2, 2),
         new THREE.MeshBasicMaterial({ wireframe: true, color: `rgb(33,0,${(index * 60) + 0})` })
     )
     scene.add(meshes[index])
     group.add(meshes[index])
-    meshes[index].position.y += index * 2
-    meshes[index].rotation.z = index * 10
+    meshes[index].position.y -= index * 2
+    //meshes[index].rotation.z = index * 10
 }
 
 scene.add(group)
 group.position.set(0,0,0)
-console.log(group)
 
 // Debug properties
+
+
 debugUI
     .add(group.position, 'x')
     .min(0)
@@ -134,18 +146,26 @@ debugUI
 debugUI
     .add(group, 'visible')
 debugUI
-    .add(meshes[4].material, 'wireframe')
+    .add(meshes[1].material, 'wireframe')
 debugUI
-    .add(meshes[4].material.color, 'r')
+    .addColor(debugParams, 'color')
+    .onChange(() => 
+    {
+        meshes[1].material.color.set(debugParams.color)
+    })
+debugUI
+    .add(debugParams, 'spin')
+debugUI
+    .add(debugParams, 'rotationSpeed' )
     .min(0)
-    .max(1)
-    .step(0.01)
-    .name('First Cube Red Channel')
+    .max(.2)
+    .step(0.001)
+    .name('Rotation Speed')
 
 // Camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
+const camera = new THREE.PerspectiveCamera(40, sizes.width / sizes.height)
 
-camera.position.z = 4
+camera.position.set(0,10,0)
 scene.add(camera)
 
 // Controls
@@ -169,7 +189,7 @@ const UpdateLoop = () =>
 
     // Update objects
     for (let index = 0; index < meshes.length; index++) {
-        meshes[index].rotation.y = elapsedTime * (index / 10 )
+        meshes[index].rotation.y = elapsedTime * (index * debugParams.rotationSpeed )
     }
 
     controls.update()
